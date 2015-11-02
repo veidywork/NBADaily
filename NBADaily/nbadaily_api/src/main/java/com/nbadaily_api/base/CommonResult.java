@@ -1,0 +1,12 @@
+package com.nbadaily_api.base;
+
+import java.io.Serializable;
+
+/**
+ * @author : veidy
+ * @version : 1.0
+ * @Description : NBADaily
+ * @Create Date  : 2015/11/2  16:40
+ */
+public class CommonResult implements Serializable {
+}

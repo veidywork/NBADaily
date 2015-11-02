@@ -2,20 +2,33 @@ package com.veidy.nba.daily;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import com.nbadaily_api.model.DailyModel;
+import com.nbadaily_api.model.PHOTO;
+import com.veidy.nba.daily.logic.daily.DailyLogic;
+import com.veidy.nba.daily.logic.daily.IDailyLogic;
+import com.veidy.nba.daily.ui.base.BaseActivity;
+import com.veidy.nba.daily.ui.base.adapter.DailyAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private ListView lv;
+    private DailyAdapter adapter;
+    private List<DailyModel> dailyModelList=new ArrayList<>();
+    IDailyLogic dailyLogic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +53,24 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        initView("");
+        initData();
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                dailyLogic.getDaily("");
+            }
+        }).start();
+    }
+
+    @Override
+    protected void initLogic() {
+        super.initLogic();
+        if (dailyLogic==null)
+            dailyLogic=new DailyLogic();
     }
 
     @Override
@@ -50,6 +81,36 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void initView(String title) {
+        super.initView(title);
+        lv=getView(R.id.lv);
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
+
+        for (int i = 0; i <10; i++) {
+            DailyModel model=new DailyModel();
+            model.team_A="热火";
+            PHOTO photo_a=new PHOTO();
+            model.team_A_icon=photo_a;
+            model.team_B="火箭";
+            model.play_state=3;
+            model.play_time="11/02 07:00";
+            model.team_A_score=109;
+            model.team_B_score=89;
+            model.play_state=3;
+            model.play_time="11/02 07:00";
+            dailyModelList.add(model);
+
+        }
+        adapter=new DailyAdapter(this,dailyModelList);
+
+        lv.setAdapter(adapter);
     }
 
     @Override
