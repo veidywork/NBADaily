@@ -39,6 +39,7 @@ public class DailyAdapter extends BaseVAdapter {
         tv_b_name.setText(dailyModel.team_B);
 
         tv_scroe.setText(dailyModel.team_A_score+"-"+dailyModel.team_B_score);
+        tv_scroe.setText(dailyModel.format_score);
         tv_play_time.setText(dailyModel.play_time);
         String state="未开始";
         switch (dailyModel.play_state) {

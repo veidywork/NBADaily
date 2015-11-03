@@ -2,10 +2,11 @@ package com.veidy.nba.daily.logic.daily;
 
 import android.util.Log;
 
-import com.nbadaily_api.base.CommonResult;
 import com.nbadaily_api.base.IReturnCallBack;
 import com.nbadaily_api.base.ProtocolType;
 import com.nbadaily_api.daily.DailyReq;
+import com.nbadaily_api.daily.data.DailyResult;
+import com.veidy.nba.daily.logic.OnFinishReqListener;
 
 /**
  * @author : veidy
@@ -16,15 +17,16 @@ import com.nbadaily_api.daily.DailyReq;
 public class DailyLogic implements IDailyLogic {
 
     @Override
-    public void getDaily(String time) {
+    public void getDaily(String time, final OnFinishReqListener onFinishReqListener) {
         DailyReq dailyReq = new DailyReq();
-        dailyReq.doGet(new IReturnCallBack() {
+        dailyReq.doGet(new IReturnCallBack<DailyResult>() {
             @Override
-            public void onReturn(ProtocolType.ResponseEvent event, CommonResult result) {
+            public void onReturn(ProtocolType.ResponseEvent event, DailyResult result) {
                 if (ProtocolType.ResponseEvent.isFinish(event)) {
                     Log.d("DailyLogic","解析完成");
+                    onFinishReqListener.onSuccess(result);
                 }
             }
-        });
+        },null);
     }
 }

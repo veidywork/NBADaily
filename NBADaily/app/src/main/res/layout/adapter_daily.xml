@@ -63,5 +63,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:padding="10dp"
+        android:visibility="gone"
         android:text="集锦"/>
 </LinearLayout>

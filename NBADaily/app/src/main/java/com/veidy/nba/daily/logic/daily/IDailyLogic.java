@@ -1,5 +1,7 @@
 package com.veidy.nba.daily.logic.daily;
 
+import com.veidy.nba.daily.logic.OnFinishReqListener;
+
 /**
  * @author : veidy
  * @version : 1.0
@@ -8,5 +10,5 @@ package com.veidy.nba.daily.logic.daily;
  */
 public interface IDailyLogic {
 
-    public void getDaily(String time);
+    public void getDaily(String time,OnFinishReqListener onFinishReqListener);
 }

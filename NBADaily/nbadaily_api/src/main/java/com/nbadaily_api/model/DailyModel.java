@@ -61,4 +61,9 @@ public class DailyModel extends BaseModel{
      */
     public int play_state;
 
+    /**
+     * 格式化后的比分
+     */
+    public String format_score;
+
 }

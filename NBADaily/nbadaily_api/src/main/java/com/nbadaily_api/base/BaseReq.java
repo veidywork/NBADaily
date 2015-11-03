@@ -14,7 +14,7 @@ public abstract class BaseReq<T extends CommonResult> {
 
     public abstract String fromJson(JSONObject jsonObject);
 
-    public abstract void doGet(IReturnCallBack callBack);
+    public abstract void doGet(IReturnCallBack callBack,T result);
 
 //    public abstract void  exec();
 

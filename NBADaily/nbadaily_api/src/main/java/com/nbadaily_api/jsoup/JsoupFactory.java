@@ -64,7 +64,6 @@ public class JsoupFactory {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String title = doc.title();
         return doc;
     }
 
