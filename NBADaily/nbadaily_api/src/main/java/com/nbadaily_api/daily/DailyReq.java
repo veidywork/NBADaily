@@ -54,7 +54,6 @@ public class DailyReq extends BaseReq{
                 if (flag < 2) {
                     for (int j = 0; j < tds.size(); j++) {
                         String text = tds.get(j).text();
-                        System.out.println(text);
                         if ("类型".equals(text)) {
                             flag++;
                         }

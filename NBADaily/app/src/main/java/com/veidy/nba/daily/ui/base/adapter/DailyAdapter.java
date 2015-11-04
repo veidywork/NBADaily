@@ -3,9 +3,11 @@ package com.veidy.nba.daily.ui.base.adapter;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nbadaily_api.model.DailyModel;
+import com.squareup.picasso.Picasso;
 import com.veidy.nba.daily.R;
 
 import java.util.List;
@@ -31,7 +33,8 @@ public class DailyAdapter extends BaseVAdapter {
         TextView tv_a_name=ViewHolder.get(convertView,R.id.tv_a_name);
         TextView tv_b_name=ViewHolder.get(convertView,R.id.tv_b_name);
         TextView tv_scroe=ViewHolder.get(convertView,R.id.tv_score);
-
+        ImageView iv_a_icon=ViewHolder.get(convertView,R.id.iv_a_icon);
+        ImageView iv_b_icon=ViewHolder.get(convertView,R.id.iv_b_icon);
         DailyModel dailyModel= (DailyModel) getItem(position);
 
         tv_a_name.setText(dailyModel.team_A);
@@ -41,6 +44,11 @@ public class DailyAdapter extends BaseVAdapter {
         tv_scroe.setText(dailyModel.team_A_score+"-"+dailyModel.team_B_score);
         tv_scroe.setText(dailyModel.format_score);
         tv_play_time.setText(dailyModel.play_time);
+
+
+        // imageUri = "drawable://" + photo.drawableid;
+        Picasso.with(mContext).load(dailyModel.team_A_icon.drawableids).into(iv_a_icon);
+        Picasso.with(mContext).load(dailyModel.team_B_icon.drawableids).into(iv_b_icon);
         String state="未开始";
         switch (dailyModel.play_state) {
             case 0:

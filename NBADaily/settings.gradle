@@ -1,1 +1,1 @@
-include ':app', ':nbadaily_api'
+include ':app', ':nbadaily_api', ':generatorlib'

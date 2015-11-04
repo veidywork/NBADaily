@@ -22,11 +22,16 @@ import com.veidy.nba.daily.common.MessageType;
 import com.veidy.nba.daily.logic.OnFinishReqListener;
 import com.veidy.nba.daily.logic.daily.DailyLogic;
 import com.veidy.nba.daily.logic.daily.IDailyLogic;
+import com.veidy.nba.daily.logic.db.DBLogic;
+import com.veidy.nba.daily.logic.db.IDBLogic;
 import com.veidy.nba.daily.ui.base.BaseActivity;
 import com.veidy.nba.daily.ui.base.adapter.DailyAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import greendao.NBATeam;
+import greendao.NBATeamDao;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -35,6 +40,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private List<DailyModel> dailyModelList = new ArrayList<>();
     IDailyLogic dailyLogic;
     private SwipeRefreshLayout swiperefreshlayout;
+    private IDBLogic idbLogic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +77,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 dailyLogic.getDaily("", new OnFinishReqListener() {
                     @Override
                     public void onSuccess(Object object) {
-                        Message message = new Message();
-                        message.obj = object;
-                        message.what = MessageType.DAILYLIST_SUCCESS;
-                        getHandler().sendMessage(message);
+                        ResponseData(object);
                     }
 
                     @Override
@@ -93,8 +96,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (message.what) {
             case MessageType.DAILYLIST_SUCCESS:
                 swiperefreshlayout.setRefreshing(false);
-                DailyResult result = (DailyResult) message.obj;
-                List<DailyModel> data = result.dailyModels;
+                List<DailyModel> data = (List<DailyModel>) message.obj;
                 if (null != data && data.size() > 0) {
                     dailyModelList.clear();
                     dailyModelList.addAll(data);
@@ -110,6 +112,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.initLogic();
         if (dailyLogic == null)
             dailyLogic = new DailyLogic();
+        idbLogic = new DBLogic();
     }
 
     @Override
@@ -126,28 +129,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void initView(String title) {
         super.initView(title);
         lv = getView(R.id.lv);
-        swiperefreshlayout=getView(R.id.swiperefreshlayout);
+        swiperefreshlayout = getView(R.id.swiperefreshlayout);
     }
 
     @Override
     protected void initData() {
         super.initData();
 
-        for (int i = 0; i < 10; i++) {
-            DailyModel model = new DailyModel();
-            model.team_A = "热火";
-            PHOTO photo_a = new PHOTO();
-            model.team_A_icon = photo_a;
-            model.team_B = "火箭";
-            model.play_state = 3;
-            model.play_time = "11/02 07:00";
-            model.team_A_score = 109;
-            model.team_B_score = 89;
-            model.play_state = 3;
-            model.play_time = "11/02 07:00";
-            dailyModelList.add(model);
-
-        }
         adapter = new DailyAdapter(this, dailyModelList);
 
         lv.setAdapter(adapter);
@@ -161,10 +149,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         dailyLogic.getDaily("", new OnFinishReqListener() {
                             @Override
                             public void onSuccess(Object object) {
-                                Message message = new Message();
-                                message.obj = object;
-                                message.what = MessageType.DAILYLIST_SUCCESS;
-                                getHandler().sendMessage(message);
+                                ResponseData(object);
                             }
 
                             @Override
@@ -176,6 +161,37 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 }).start();
             }
         });
+    }
+
+    /**
+     * 解析返回数据
+     *
+     * @param object
+     */
+    private void ResponseData(Object object) {
+        Message message = new Message();
+        message.what = MessageType.DAILYLIST_SUCCESS;
+        DailyResult result = (DailyResult) object;
+        List<DailyModel> data = result.dailyModels;
+        NBATeamDao nbaTeamDao = NBAApplication.getInstance().getDaoSession().getNBATeamDao();
+        if (null != data && !data.isEmpty()) {
+            for (DailyModel dailyModel : data) {
+
+                List<NBATeam> A_TEAM = nbaTeamDao.queryBuilder().where(NBATeamDao.Properties.Team_name.eq(dailyModel.team_A)).list();
+                PHOTO photo_a = new PHOTO();
+                photo_a.drawableids = A_TEAM.get(0).getIcon_id();
+                dailyModel.team_A_icon = photo_a;
+
+                List<NBATeam> B_TEAM = nbaTeamDao.queryBuilder().where(NBATeamDao.Properties.Team_name.eq(dailyModel.team_B)).list();
+                PHOTO photo_b = new PHOTO();
+                photo_b.drawableids = B_TEAM.get(0).getIcon_id();
+                dailyModel.team_B_icon = photo_b;
+
+            }
+
+        }
+        message.obj = data;
+        getHandler().sendMessage(message);
     }
 
     @Override

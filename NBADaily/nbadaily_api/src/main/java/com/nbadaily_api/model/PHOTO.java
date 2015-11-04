@@ -12,4 +12,6 @@ public class PHOTO {
     public String thumb;	//中图
 
     public String url;		//大图
+
+    public int drawableids;
 }
